@@ -5,17 +5,23 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Build & Run Commands
 
 ```bash
-# Build the CLI
-go build -o homey .
+# Build
+make build        # or: go build -o homey .
+
+# Test
+make test         # or: go test ./...
+
+# Format
+make fmt          # requires: go install mvdan.cc/gofumpt@latest
+
+# Lint
+make lint         # requires: go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+
+# Install dev tools
+make tools
 
 # Run directly
 go run .
-
-# Build with version info (for releases)
-go build -ldflags "-X main.version=1.0.0 -X main.commit=$(git rev-parse HEAD) -X main.date=$(date -u +%Y-%m-%dT%H:%M:%SZ)" -o homey .
-
-# Run tests
-go test ./...
 
 # Run a single test
 go test -run TestName ./path/to/package
