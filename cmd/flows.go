@@ -32,6 +32,16 @@ var flowsCmd = &cobra.Command{
 	Long:  `List, trigger, create, and delete Homey flows.`,
 }
 
+// FlowListItem is the unified output format for flows
+type FlowListItem struct {
+	ID          string `json:"id"`
+	Name        string `json:"name"`
+	Type        string `json:"type"`
+	Enabled     bool   `json:"enabled"`
+	Triggerable bool   `json:"triggerable"`
+	Broken      bool   `json:"broken"`
+}
+
 var flowsListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List all flows",
@@ -47,41 +57,52 @@ var flowsListCmd = &cobra.Command{
 			return err
 		}
 
-		if isTableFormat() {
-			var normalFlows map[string]Flow
-			var advancedFlows map[string]AdvancedFlow
-			json.Unmarshal(normalData, &normalFlows)
-			json.Unmarshal(advancedData, &advancedFlows)
+		var normalFlows map[string]Flow
+		var advancedFlows map[string]AdvancedFlow
+		json.Unmarshal(normalData, &normalFlows)
+		json.Unmarshal(advancedData, &advancedFlows)
 
+		// Build flat list
+		var allFlows []FlowListItem
+		for _, f := range normalFlows {
+			allFlows = append(allFlows, FlowListItem{
+				ID:          f.ID,
+				Name:        f.Name,
+				Type:        "simple",
+				Enabled:     f.Enabled,
+				Triggerable: f.Triggerable,
+				Broken:      f.Broken,
+			})
+		}
+		for _, f := range advancedFlows {
+			allFlows = append(allFlows, FlowListItem{
+				ID:          f.ID,
+				Name:        f.Name,
+				Type:        "advanced",
+				Enabled:     f.Enabled,
+				Triggerable: f.Triggerable,
+				Broken:      f.Broken,
+			})
+		}
+
+		if isTableFormat() {
 			w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
 			fmt.Fprintln(w, "NAME\tTYPE\tENABLED\tID")
 			fmt.Fprintln(w, "----\t----\t-------\t--")
 
-			for _, f := range normalFlows {
+			for _, f := range allFlows {
 				enabled := "yes"
 				if !f.Enabled {
 					enabled = "no"
 				}
-				fmt.Fprintf(w, "%s\tsimple\t%s\t%s\n", f.Name, enabled, f.ID)
-			}
-
-			for _, f := range advancedFlows {
-				enabled := "yes"
-				if !f.Enabled {
-					enabled = "no"
-				}
-				fmt.Fprintf(w, "%s\tadvanced\t%s\t%s\n", f.Name, enabled, f.ID)
+				fmt.Fprintf(w, "%s\t%s\t%s\t%s\n", f.Name, f.Type, enabled, f.ID)
 			}
 
 			w.Flush()
 			return nil
 		}
 
-		result := map[string]json.RawMessage{
-			"flows":         normalData,
-			"advancedFlows": advancedData,
-		}
-		out, _ := json.MarshalIndent(result, "", "  ")
+		out, _ := json.MarshalIndent(allFlows, "", "  ")
 		fmt.Println(string(out))
 		return nil
 	},

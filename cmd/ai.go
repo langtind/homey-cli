@@ -127,6 +127,20 @@ echo '{"conditions": []}' > clear.json
 homey flows update "My Flow" clear.json
 ` + "```" + `
 
+## Output Format
+
+All list commands return flat JSON arrays for easy parsing:
+` + "```" + `bash
+# Find flow by name
+homey flows list | jq '.[] | select(.name | test("pult";"i"))'
+
+# Get all enabled flows
+homey flows list | jq '.[] | select(.enabled)'
+
+# Get device IDs by name
+homey devices list | jq '.[] | select(.name | test("office";"i")) | .id'
+` + "```" + `
+
 ## Workflow Tips
 
 1. **Get device IDs first**: Run ` + "`homey devices list`" + ` to find device IDs
