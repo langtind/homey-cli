@@ -27,7 +27,7 @@ type Capability struct {
 var devicesCmd = &cobra.Command{
 	Use:   "devices",
 	Short: "Manage devices",
-	Long:  `List, view, and control Homey devices.`,
+	Long:  `List, view, control, and delete Homey devices.`,
 }
 
 var devicesListCmd = &cobra.Command{
@@ -176,9 +176,43 @@ Examples:
 	},
 }
 
+var devicesDeleteCmd = &cobra.Command{
+	Use:   "delete <name-or-id>",
+	Short: "Delete a device",
+	Args:  cobra.ExactArgs(1),
+	RunE: func(cmd *cobra.Command, args []string) error {
+		nameOrID := args[0]
+
+		// Get all devices to find by name
+		data, err := apiClient.GetDevices()
+		if err != nil {
+			return err
+		}
+
+		var devices map[string]Device
+		if err := json.Unmarshal(data, &devices); err != nil {
+			return fmt.Errorf("failed to parse devices: %w", err)
+		}
+
+		// Find device by name or ID
+		for _, d := range devices {
+			if d.ID == nameOrID || strings.EqualFold(d.Name, nameOrID) {
+				if err := apiClient.DeleteDevice(d.ID); err != nil {
+					return err
+				}
+				fmt.Printf("Deleted device: %s\n", d.Name)
+				return nil
+			}
+		}
+
+		return fmt.Errorf("device not found: %s", nameOrID)
+	},
+}
+
 func init() {
 	rootCmd.AddCommand(devicesCmd)
 	devicesCmd.AddCommand(devicesListCmd)
 	devicesCmd.AddCommand(devicesGetCmd)
 	devicesCmd.AddCommand(devicesSetCmd)
+	devicesCmd.AddCommand(devicesDeleteCmd)
 }

@@ -82,6 +82,11 @@ func (c *Client) SetCapability(deviceID, capability string, value interface{}) e
 	return err
 }
 
+func (c *Client) DeleteDevice(id string) error {
+	_, err := c.doRequest("DELETE", "/api/manager/devices/device/"+id, nil)
+	return err
+}
+
 // Flows
 
 func (c *Client) GetFlows() (json.RawMessage, error) {
@@ -146,6 +151,11 @@ func (c *Client) GetFlowActions() (json.RawMessage, error) {
 
 func (c *Client) GetZones() (json.RawMessage, error) {
 	return c.doRequest("GET", "/api/manager/zones/zone/", nil)
+}
+
+func (c *Client) DeleteZone(id string) error {
+	_, err := c.doRequest("DELETE", "/api/manager/zones/zone/"+id, nil)
+	return err
 }
 
 // Apps

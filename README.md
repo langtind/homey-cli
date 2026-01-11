@@ -68,6 +68,9 @@ homey devices get "Living Room Light"
 homey devices set "Living Room Light" onoff true
 homey devices set "Living Room Light" dim 0.5
 homey devices set "Thermostat" target_temperature 22
+
+# Delete a device
+homey devices delete "Old Device"
 ```
 
 ### Flows
@@ -143,7 +146,11 @@ homey users list
 ### Zones
 
 ```bash
+# List zones
 homey zones list
+
+# Delete a zone
+homey zones delete "Unused Room"
 ```
 
 ### Apps

@@ -37,7 +37,8 @@ homey config show                   # Verify configuration
 ` + "```" + `bash
 homey devices list                  # List all devices
 homey devices get <id>              # Get device details
-homey devices capability <id> <capability> <value>  # Control device
+homey devices set <id> <capability> <value>  # Control device
+homey devices delete <name-or-id>   # Delete a device
 ` + "```" + `
 
 ### Flows
@@ -53,6 +54,7 @@ homey flows delete <name-or-id>     # Delete a flow
 ### Zones & Users
 ` + "```" + `bash
 homey zones list                    # List all zones
+homey zones delete <name-or-id>     # Delete a zone
 homey users list                    # List all users
 ` + "```" + `
 
