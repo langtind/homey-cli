@@ -25,13 +25,25 @@ go install github.com/langtind/homey-cli@latest
 
 ## Configuration
 
-First, get your Homey's local IP and API token from the Homey Developer Tools.
+### 1. Find your Homey's IP address
+
+Open the Homey app → Settings → General → scroll down to find the local IP address (e.g., `192.168.1.100`).
+
+### 2. Get your API token
+
+1. Go to [Homey Developer Tools](https://tools.developer.homey.app/)
+2. Log in with your Athom account
+3. Select your Homey
+4. Go to **API** in the sidebar
+5. Under "Bearer Token", click **Copy** to copy your token
+
+### 3. Configure homey-cli
 
 ```bash
 # Set your Homey's IP address
 homey config set-host 192.168.1.100
 
-# Set your API token
+# Set your API token (paste the token you copied)
 homey config set-token <your-token>
 
 # Verify configuration
@@ -68,6 +80,9 @@ homey flows get "My Flow"
 
 # Trigger a flow
 homey flows trigger "Good Morning"
+
+# Update a flow (partial/merge update)
+homey flows update "My Flow" updated-flow.json
 
 # Delete a flow
 homey flows delete "Old Flow"
@@ -187,6 +202,16 @@ homey devices list --format table
 # Set default format
 homey config set-format table
 ```
+
+## AI Assistant Support
+
+Get context for AI assistants (Claude, ChatGPT, etc.) to help them use homey-cli:
+
+```bash
+homey ai
+```
+
+This outputs documentation, examples, and flow JSON format - perfect for pasting into an AI chat or including in your project's context.
 
 ## Environment Variables
 
