@@ -295,6 +295,10 @@ func (c *Client) GetEnergyReportsAvailable() (json.RawMessage, error) {
 	return c.doRequest("GET", "/api/manager/energy/reports/available", nil)
 }
 
-func (c *Client) GetElectricityPrice() (json.RawMessage, error) {
-	return c.doRequest("GET", "/api/manager/energy/price/electricity/dynamic", nil)
+func (c *Client) GetElectricityPrice(date string) (json.RawMessage, error) {
+	path := "/api/manager/energy/price/electricity/dynamic"
+	if date != "" {
+		path += "?date=" + date
+	}
+	return c.doRequest("GET", path, nil)
 }

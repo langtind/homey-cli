@@ -218,9 +218,47 @@ var energyPriceCmd = &cobra.Command{
 	Use:   "price",
 	Short: "Show current electricity price",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		data, err := apiClient.GetElectricityPrice()
+		date := time.Now().Format("2006-01-02")
+		data, err := apiClient.GetElectricityPrice(date)
 		if err != nil {
 			return err
+		}
+
+		if isTableFormat() {
+			var prices struct {
+				PriceUnit         string `json:"priceUnit"`
+				PricesPerInterval []struct {
+					PeriodStart string  `json:"periodStart"`
+					PeriodEnd   string  `json:"periodEnd"`
+					Value       float64 `json:"value"`
+				} `json:"pricesPerInterval"`
+			}
+			if err := json.Unmarshal(data, &prices); err != nil {
+				outputJSON(data)
+				return nil
+			}
+
+			now := time.Now()
+			fmt.Printf("Electricity prices for %s (%s)\n\n", date, prices.PriceUnit)
+
+			w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+			fmt.Fprintln(w, "TIME\tPRICE")
+			fmt.Fprintln(w, "----\t-----")
+			for _, p := range prices.PricesPerInterval {
+				start, _ := time.Parse(time.RFC3339, p.PeriodStart)
+				end, _ := time.Parse(time.RFC3339, p.PeriodEnd)
+				marker := ""
+				if now.After(start) && now.Before(end) {
+					marker = " <-- now"
+				}
+				fmt.Fprintf(w, "%s-%s\t%.2f%s\n",
+					start.Local().Format("15:04"),
+					end.Local().Format("15:04"),
+					p.Value,
+					marker)
+			}
+			w.Flush()
+			return nil
 		}
 
 		outputJSON(data)
