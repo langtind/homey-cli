@@ -71,7 +71,16 @@ var configShowCmd = &cobra.Command{
 var configSetTokenCmd = &cobra.Command{
 	Use:   "set-token <token>",
 	Short: "Set API token",
-	Args:  cobra.ExactArgs(1),
+	Long: `Set the API token for authenticating with your Homey.
+
+To create a new API key:
+  1. Go to https://my.homey.app/
+  2. Select your Homey
+  3. Click Settings (gear icon, bottom left)
+  4. Click API Keys
+  5. Click "+ New API Key"
+  6. Copy the generated token and use it here`,
+	Args: cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		cfg, err := config.Load()
 		if err != nil {
@@ -96,7 +105,13 @@ var configSetTokenCmd = &cobra.Command{
 var configSetHostCmd = &cobra.Command{
 	Use:   "set-host <host>",
 	Short: "Set Homey host",
-	Args:  cobra.ExactArgs(1),
+	Long: `Set the IP address of your Homey.
+
+To find your Homey's IP address:
+  - Open the Homey app on your phone
+  - Go to Settings → General
+  - Scroll down to find the local IP address (e.g., 192.168.1.100)`,
+	Args: cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		cfg, err := config.Load()
 		if err != nil {
