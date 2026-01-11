@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"time"
 
 	"github.com/langtind/homey-cli/internal/config"
@@ -247,4 +248,53 @@ func (c *Client) GetUsers() (json.RawMessage, error) {
 
 func (c *Client) GetInsights() (json.RawMessage, error) {
 	return c.doRequest("GET", "/api/manager/insights/log/", nil)
+}
+
+func (c *Client) GetInsightEntries(uri, id, resolution string) (json.RawMessage, error) {
+	// URL encode the URI and ID since they contain colons
+	encodedURI := url.PathEscape(uri)
+	encodedID := url.PathEscape(id)
+	path := fmt.Sprintf("/api/manager/insights/log/%s/%s/entry", encodedURI, encodedID)
+	if resolution != "" {
+		path += "?resolution=" + resolution
+	}
+	return c.doRequest("GET", path, nil)
+}
+
+// Energy
+
+func (c *Client) GetEnergyLive() (json.RawMessage, error) {
+	return c.doRequest("GET", "/api/manager/energy/live", nil)
+}
+
+func (c *Client) GetEnergyReportDay(date string) (json.RawMessage, error) {
+	path := "/api/manager/energy/report/day"
+	if date != "" {
+		path += "?date=" + date
+	}
+	return c.doRequest("GET", path, nil)
+}
+
+func (c *Client) GetEnergyReportWeek(isoWeek string) (json.RawMessage, error) {
+	path := "/api/manager/energy/report/week"
+	if isoWeek != "" {
+		path += "?isoWeek=" + isoWeek
+	}
+	return c.doRequest("GET", path, nil)
+}
+
+func (c *Client) GetEnergyReportMonth(yearMonth string) (json.RawMessage, error) {
+	path := "/api/manager/energy/report/month"
+	if yearMonth != "" {
+		path += "?yearMonth=" + yearMonth
+	}
+	return c.doRequest("GET", path, nil)
+}
+
+func (c *Client) GetEnergyReportsAvailable() (json.RawMessage, error) {
+	return c.doRequest("GET", "/api/manager/energy/reports/available", nil)
+}
+
+func (c *Client) GetElectricityPrice() (json.RawMessage, error) {
+	return c.doRequest("GET", "/api/manager/energy/price/electricity/dynamic", nil)
 }

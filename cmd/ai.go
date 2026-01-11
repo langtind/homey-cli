@@ -58,6 +58,20 @@ homey zones delete <name-or-id>     # Delete a zone
 homey users list                    # List all users
 ` + "```" + `
 
+### Energy
+` + "```" + `bash
+homey energy live                   # Live power usage
+homey energy report day             # Today's energy report
+homey energy report week            # This week's report
+homey energy report month --date 2025-12  # December report
+` + "```" + `
+
+### Insights
+` + "```" + `bash
+homey insights list                 # List all insight logs
+homey insights get <log-id>         # Get historical data
+` + "```" + `
+
 ## Flow JSON Format
 
 ### Simple Flow Example

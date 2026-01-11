@@ -163,6 +163,39 @@ homey apps list
 homey apps restart com.some.app
 ```
 
+### Energy
+
+```bash
+# Show live power usage
+homey energy live
+
+# Show today's energy report
+homey energy report day
+
+# Show report for specific date
+homey energy report day --date 2025-01-10
+
+# Weekly and monthly reports
+homey energy report week
+homey energy report month --date 2025-12
+
+# Show electricity prices
+homey energy price
+```
+
+### Insights
+
+```bash
+# List all insight logs
+homey insights list
+
+# Get historical data for a log
+homey insights get "homey:device:abc123:measure_power"
+
+# With different resolutions
+homey insights get "homey:device:abc123:measure_power" --resolution lastWeek
+```
+
 ### Variables
 
 ```bash
