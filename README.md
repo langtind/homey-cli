@@ -31,11 +31,12 @@ Open the Homey app → Settings → General → scroll down to find the local IP
 
 ### 2. Get your API token
 
-1. Go to [Homey Developer Tools](https://tools.developer.homey.app/)
-2. Log in with your Athom account
-3. Select your Homey
-4. Go to **API** in the sidebar
-5. Under "Bearer Token", click **Copy** to copy your token
+1. Go to [my.homey.app](https://my.homey.app/)
+2. Log in and select your Homey
+3. Click **Settings** (gear icon, bottom left)
+4. Click **API Keys**
+5. Click **+ New API Key** to create a new token
+6. Copy the generated token
 
 ### 3. Configure homey-cli
 
