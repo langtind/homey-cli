@@ -1,5 +1,7 @@
 # homey-cli
 
+![homey-cli banner](banner.png)
+
 A command-line interface for controlling [Homey](https://homey.app) smart home devices via the local API.
 
 ## Installation
