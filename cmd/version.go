@@ -10,7 +10,7 @@ var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "Show version information",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Printf("homey-cli version %s\n", versionInfo.Version)
+		fmt.Printf("homeyctl version %s\n", versionInfo.Version)
 		if versionInfo.Commit != "unknown" {
 			fmt.Printf("commit: %s\n", versionInfo.Commit)
 		}

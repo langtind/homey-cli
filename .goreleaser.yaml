@@ -7,9 +7,9 @@ before:
     - go mod tidy
 
 builds:
-  - id: homey
+  - id: homeyctl
     main: .
-    binary: homey
+    binary: homeyctl
     env:
       - CGO_ENABLED=0
     ldflags:
@@ -27,7 +27,7 @@ builds:
 
 archives:
   - builds:
-      - homey
+      - homeyctl
     format: tar.gz
     name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
     format_overrides:
@@ -53,6 +53,6 @@ brews:
     homepage: "https://github.com/langtind/homey-cli"
     description: "CLI for controlling Homey smart home"
     install: |
-      bin.install "homey"
+      bin.install "homeyctl"
     test: |
-      system "#{bin}/homey", "version"
+      system "#{bin}/homeyctl", "version"

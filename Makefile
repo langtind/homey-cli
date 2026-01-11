@@ -1,7 +1,7 @@
 .PHONY: build test fmt lint tools
 
 build:
-	go build -o homey .
+	go build -o homeyctl .
 
 test:
 	go test ./...

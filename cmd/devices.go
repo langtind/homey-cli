@@ -119,9 +119,9 @@ var devicesSetCmd = &cobra.Command{
 	Long: `Set a device capability value.
 
 Examples:
-  homey devices set "PultLED" onoff true
-  homey devices set "PultLED" dim 0.5
-  homey devices set "Aksels rom" target_temperature 22`,
+  homeyctl devices set "PultLED" onoff true
+  homeyctl devices set "PultLED" dim 0.5
+  homeyctl devices set "Aksels rom" target_temperature 22`,
 	Args: cobra.ExactArgs(3),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		nameOrID := args[0]

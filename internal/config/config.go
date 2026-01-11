@@ -19,6 +19,32 @@ func (c *Config) BaseURL() string {
 	return fmt.Sprintf("http://%s:%d", c.Host, c.Port)
 }
 
+// CheckLegacyConfig checks if the old homey-cli config exists and prints migration instructions
+func CheckLegacyConfig() {
+	configDir, err := os.UserConfigDir()
+	if err != nil {
+		return
+	}
+
+	oldDir := filepath.Join(configDir, "homey-cli")
+	newDir := filepath.Join(configDir, "homeyctl")
+
+	// Check if old config exists and new one doesn't
+	if _, err := os.Stat(filepath.Join(oldDir, "config.toml")); err == nil {
+		if _, err := os.Stat(filepath.Join(newDir, "config.toml")); os.IsNotExist(err) {
+			fmt.Fprintln(os.Stderr, "")
+			fmt.Fprintln(os.Stderr, "⚠️  Found config from previous version (homey-cli)")
+			fmt.Fprintln(os.Stderr, "")
+			fmt.Fprintln(os.Stderr, "The binary has been renamed from 'homey' to 'homeyctl' to avoid")
+			fmt.Fprintln(os.Stderr, "conflicts with Athom's official Homey CLI for app development.")
+			fmt.Fprintln(os.Stderr, "")
+			fmt.Fprintln(os.Stderr, "To migrate your config, run:")
+			fmt.Fprintf(os.Stderr, "  mv %s %s\n", oldDir, newDir)
+			fmt.Fprintln(os.Stderr, "")
+		}
+	}
+}
+
 func Load() (*Config, error) {
 	viper.SetConfigName("config")
 	viper.SetConfigType("toml")
@@ -26,7 +52,7 @@ func Load() (*Config, error) {
 	// Config locations
 	configDir, err := os.UserConfigDir()
 	if err == nil {
-		viper.AddConfigPath(filepath.Join(configDir, "homey-cli"))
+		viper.AddConfigPath(filepath.Join(configDir, "homeyctl"))
 	}
 	viper.AddConfigPath(".")
 
@@ -60,7 +86,7 @@ func Save(cfg *Config) error {
 		return fmt.Errorf("failed to get config dir: %w", err)
 	}
 
-	dir := filepath.Join(configDir, "homey-cli")
+	dir := filepath.Join(configDir, "homeyctl")
 	if err := os.MkdirAll(dir, 0755); err != nil {
 		return fmt.Errorf("failed to create config dir: %w", err)
 	}

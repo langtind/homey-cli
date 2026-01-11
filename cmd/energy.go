@@ -80,10 +80,10 @@ Periods:
   month - Monthly report
 
 Examples:
-  homey energy report day
-  homey energy report day --date 2025-01-10
-  homey energy report week
-  homey energy report month --date 2025-01`,
+  homeyctl energy report day
+  homeyctl energy report day --date 2025-01-10
+  homeyctl energy report week
+  homeyctl energy report month --date 2025-01`,
 	Args: cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		period := "day"
@@ -279,9 +279,9 @@ This is the total price Homey uses for cost calculations. You decide what to inc
 Homey does NOT automatically add grid fees or taxes - set the price you want to use.
 
 Examples:
-  homey energy price set 0.50      # Norgespris (0.50 kr/kWh incl. VAT, excl. grid)
-  homey energy price set 1.20      # Total price including grid fees
-  homey energy price set 0.85      # Spot price estimate`,
+  homeyctl energy price set 0.50      # Norgespris (0.50 kr/kWh incl. VAT, excl. grid)
+  homeyctl energy price set 1.20      # Total price including grid fees
+  homeyctl energy price set 0.85      # Spot price estimate`,
 	Args: cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var price float64
@@ -313,14 +313,14 @@ var energyPriceTypeCmd = &cobra.Command{
 	Long: `Get or set the electricity price type.
 
 Types:
-  fixed    - Use manually set fixed price (see: homey energy price set)
+  fixed    - Use manually set fixed price (see: homeyctl energy price set)
   dynamic  - Use dynamic prices from Tibber/Nordpool
   disabled - Disable price tracking
 
 Examples:
-  homey energy price type           # Show current type
-  homey energy price type fixed     # Switch to fixed pricing
-  homey energy price type dynamic   # Switch to dynamic pricing`,
+  homeyctl energy price type           # Show current type
+  homeyctl energy price type fixed     # Switch to fixed pricing
+  homeyctl energy price type dynamic   # Switch to dynamic pricing`,
 	Args: cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {

@@ -197,10 +197,10 @@ var flowsCreateCmd = &cobra.Command{
 Use --advanced flag to create an advanced flow.
 
 DISCOVERING IDs:
-  - Device IDs:     homey devices list
-  - User IDs:       homey users list
-  - Flow card IDs:  homey flows cards --type trigger|condition|action
-  - Zone IDs:       homey zones list
+  - Device IDs:     homeyctl devices list
+  - User IDs:       homeyctl users list
+  - Flow card IDs:  homeyctl flows cards --type trigger|condition|action
+  - Zone IDs:       homeyctl zones list
 
 FLOW JSON STRUCTURE (group fields are auto-added if missing):
 {
@@ -248,9 +248,9 @@ DROPTOKENS (for logic conditions):
   Common capabilities: measure_temperature, measure_humidity, measure_power, onoff
 
 Examples:
-  homey flows create flow.json
-  homey flows create --advanced advanced-flow.json
-  cat flow.json | homey flows create -`,
+  homeyctl flows create flow.json
+  homeyctl flows create --advanced advanced-flow.json
+  cat flow.json | homeyctl flows create -`,
 	Args: cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		advanced, _ := cmd.Flags().GetBool("advanced")
@@ -415,15 +415,15 @@ actions, explicitly set them to an empty array: "conditions": []
 
 Examples:
   # Full update workflow
-  homey flows get "My Flow" > flow.json
+  homeyctl flows get "My Flow" > flow.json
   # Edit flow.json
-  homey flows update "My Flow" flow.json
+  homeyctl flows update "My Flow" flow.json
 
   # Partial update - just rename
-  echo '{"name": "New Name"}' | homey flows update "Old Name" /dev/stdin
+  echo '{"name": "New Name"}' | homeyctl flows update "Old Name" /dev/stdin
 
   # Remove all conditions
-  echo '{"conditions": []}' | homey flows update "My Flow" /dev/stdin`,
+  echo '{"conditions": []}' | homeyctl flows update "My Flow" /dev/stdin`,
 	Args: cobra.ExactArgs(2),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		nameOrID := args[0]
@@ -540,10 +540,10 @@ The card ID format is: homey:<owner>:<card-name>
   - homey:manager:logic:lt (logic condition)
 
 Examples:
-  homey flows cards --type trigger
-  homey flows cards --type trigger | jq '.[] | select(.id | contains("presence"))'
-  homey flows cards --type action | jq '.[] | select(.id | contains("<device-id>"))'
-  homey flows cards --type condition | jq '.[] | select(.id | contains("logic"))'`,
+  homeyctl flows cards --type trigger
+  homeyctl flows cards --type trigger | jq '.[] | select(.id | contains("presence"))'
+  homeyctl flows cards --type action | jq '.[] | select(.id | contains("<device-id>"))'
+  homeyctl flows cards --type condition | jq '.[] | select(.id | contains("logic"))'`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		cardType, _ := cmd.Flags().GetString("type")
 		filter, _ := cmd.Flags().GetString("filter")

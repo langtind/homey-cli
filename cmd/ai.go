@@ -9,7 +9,7 @@ import (
 var aiCmd = &cobra.Command{
 	Use:   "ai",
 	Short: "Output context for AI assistants",
-	Long:  `Prints documentation and examples to help AI assistants use homey-cli effectively.`,
+	Long:  `Prints documentation and examples to help AI assistants use homeyctl effectively.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Print(aiContext)
 	},
@@ -19,61 +19,61 @@ func init() {
 	rootCmd.AddCommand(aiCmd)
 }
 
-const aiContext = `# homey-cli - AI Assistant Context
+const aiContext = `# homeyctl - AI Assistant Context
 
 ## Overview
 CLI for controlling Homey smart home via local API. Requires configuration first.
 
 ## Setup
 ` + "```" + `bash
-homey config set-host <homey-ip>    # e.g., 192.168.1.100
-homey config set-token <api-token>  # From Homey Developer Tools
-homey config show                   # Verify configuration
+homeyctl config set-host <homey-ip>    # e.g., 192.168.1.100
+homeyctl config set-token <api-token>  # From Homey Developer Tools
+homeyctl config show                   # Verify configuration
 ` + "```" + `
 
 ## Available Commands
 
 ### Devices
 ` + "```" + `bash
-homey devices list                  # List all devices
-homey devices get <id>              # Get device details
-homey devices set <id> <capability> <value>  # Control device
-homey devices delete <name-or-id>   # Delete a device
+homeyctl devices list                  # List all devices
+homeyctl devices get <id>              # Get device details
+homeyctl devices set <id> <capability> <value>  # Control device
+homeyctl devices delete <name-or-id>   # Delete a device
 ` + "```" + `
 
 ### Flows
 ` + "```" + `bash
-homey flows list                    # List all flows
-homey flows get <name-or-id>        # Get flow details
-homey flows create <file.json>      # Create flow from JSON
-homey flows update <name> <file>    # Update existing flow (merge)
-homey flows trigger <name-or-id>    # Trigger a flow by name or ID
-homey flows delete <name-or-id>     # Delete a flow
+homeyctl flows list                    # List all flows
+homeyctl flows get <name-or-id>        # Get flow details
+homeyctl flows create <file.json>      # Create flow from JSON
+homeyctl flows update <name> <file>    # Update existing flow (merge)
+homeyctl flows trigger <name-or-id>    # Trigger a flow by name or ID
+homeyctl flows delete <name-or-id>     # Delete a flow
 ` + "```" + `
 
 ### Zones & Users
 ` + "```" + `bash
-homey zones list                    # List all zones
-homey zones delete <name-or-id>     # Delete a zone
-homey users list                    # List all users
+homeyctl zones list                    # List all zones
+homeyctl zones delete <name-or-id>     # Delete a zone
+homeyctl users list                    # List all users
 ` + "```" + `
 
 ### Energy
 ` + "```" + `bash
-homey energy live                   # Live power usage
-homey energy report day             # Today's energy report
-homey energy report week            # This week's report
-homey energy report month --date 2025-12  # December report
-homey energy price                  # Show dynamic electricity prices
-homey energy price set 0.50         # Set fixed price (e.g., Norgespris)
-homey energy price type             # Show current price type
-homey energy price type fixed       # Switch to fixed pricing
+homeyctl energy live                   # Live power usage
+homeyctl energy report day             # Today's energy report
+homeyctl energy report week            # This week's report
+homeyctl energy report month --date 2025-12  # December report
+homeyctl energy price                  # Show dynamic electricity prices
+homeyctl energy price set 0.50         # Set fixed price (e.g., Norgespris)
+homeyctl energy price type             # Show current price type
+homeyctl energy price type fixed       # Switch to fixed pricing
 ` + "```" + `
 
 ### Insights
 ` + "```" + `bash
-homey insights list                 # List all insight logs
-homey insights get <log-id>         # Get historical data
+homeyctl insights list                 # List all insight logs
+homeyctl insights get <log-id>         # Get historical data
 ` + "```" + `
 
 ## Flow JSON Format
@@ -132,7 +132,7 @@ WRONG:   "homey:device:abc123:measure_temperature"
 
 ## Flow Update Behavior
 
-` + "`homey flows update`" + ` does a **partial/merge update**:
+` + "`homeyctl flows update`" + ` does a **partial/merge update**:
 - Only fields you include will be changed
 - Omitted fields keep their existing values
 - To remove conditions/actions, explicitly set empty array: ` + "`\"conditions\": []`" + `
@@ -140,11 +140,11 @@ WRONG:   "homey:device:abc123:measure_temperature"
 ` + "```" + `bash
 # Rename a flow
 echo '{"name": "New Name"}' > rename.json
-homey flows update "Old Name" rename.json
+homeyctl flows update "Old Name" rename.json
 
 # Remove all conditions from a flow
 echo '{"conditions": []}' > clear.json
-homey flows update "My Flow" clear.json
+homeyctl flows update "My Flow" clear.json
 ` + "```" + `
 
 ## Output Format
@@ -152,20 +152,20 @@ homey flows update "My Flow" clear.json
 All list commands return flat JSON arrays for easy parsing:
 ` + "```" + `bash
 # Find flow by name
-homey flows list | jq '.[] | select(.name | test("pult";"i"))'
+homeyctl flows list | jq '.[] | select(.name | test("pult";"i"))'
 
 # Get all enabled flows
-homey flows list | jq '.[] | select(.enabled)'
+homeyctl flows list | jq '.[] | select(.enabled)'
 
 # Get device IDs by name
-homey devices list | jq '.[] | select(.name | test("office";"i")) | .id'
+homeyctl devices list | jq '.[] | select(.name | test("office";"i")) | .id'
 ` + "```" + `
 
 ## Workflow Tips
 
-1. **Get device IDs first**: Run ` + "`homey devices list`" + ` to find device IDs
-2. **Get user IDs**: Run ` + "`homey users list`" + ` for presence triggers
-3. **Check capabilities**: Run ` + "`homey devices get <id>`" + ` to see available capabilities
+1. **Get device IDs first**: Run ` + "`homeyctl devices list`" + ` to find device IDs
+2. **Get user IDs**: Run ` + "`homeyctl users list`" + ` for presence triggers
+3. **Check capabilities**: Run ` + "`homeyctl devices get <id>`" + ` to see available capabilities
 4. **Validate before creating**: The CLI validates flow JSON and warns about common mistakes
-5. **Test flows**: Use ` + "`homey flows trigger \"Flow Name\"`" + ` to test manually
+5. **Test flows**: Use ` + "`homeyctl flows trigger \"Flow Name\"`" + ` to test manually
 `

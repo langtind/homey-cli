@@ -7,7 +7,7 @@
 - `main.go` - Entry point with version info
 
 ## Build & Test Commands
-- `go build -o homey .` - Build the CLI binary
+- `go build -o homeyctl .` - Build the CLI binary
 - `go test ./...` - Run the full test suite
 - `make test` - Same as above
 - `make fmt` - Format with gofumpt
@@ -29,7 +29,7 @@
 - Include `Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>` when AI-assisted
 
 ## Configuration
-- Config file: `~/.config/homey-cli/config.toml`
+- Config file: `~/.config/homeyctl/config.toml`
 - Environment variables: `HOMEY_HOST`, `HOMEY_TOKEN`, `HOMEY_FORMAT`
 - Override config path: `--config /path/to/config.toml`
 
@@ -38,10 +38,10 @@ When creating flows via CLI:
 
 1. **Discover IDs first:**
    ```bash
-   homey devices list          # Get device IDs
-   homey users list            # Get user IDs
-   homey flows cards --type trigger|condition|action  # Get card IDs
-   homey zones list            # Get zone IDs
+   homeyctl devices list          # Get device IDs
+   homeyctl users list            # Get user IDs
+   homeyctl flows cards --type trigger|condition|action  # Get card IDs
+   homeyctl zones list            # Get zone IDs
    ```
 
 2. **Droptoken format for logic conditions:**
@@ -61,7 +61,7 @@ When creating flows via CLI:
 4. **Validation:** CLI validates JSON before sending to API
 
 ## Common Tasks
-- List devices: `homey devices list`
-- Control device: `homey devices set "Device Name" capability value`
-- Trigger flow: `homey flows trigger "Flow Name"`
-- Create flow: `homey flows create flow.json`
+- List devices: `homeyctl devices list`
+- Control device: `homeyctl devices set "Device Name" capability value`
+- Trigger flow: `homeyctl flows trigger "Flow Name"`
+- Create flow: `homeyctl flows create flow.json`

@@ -1,8 +1,10 @@
-# homey-cli
+# homeyctl
 
-![homey-cli banner](banner.png)
+![homeyctl banner](banner.png)
 
 A command-line interface for controlling [Homey](https://homey.app) smart home devices via the local API.
+
+> **Note:** The binary is named `homeyctl` to avoid conflicts with Athom's official `homey` CLI tool used for app development.
 
 ## Installation
 
@@ -38,20 +40,20 @@ Open the Homey app → Settings → General → scroll down to find the local IP
 5. Click **+ New API Key** to create a new token
 6. Copy the generated token
 
-### 3. Configure homey-cli
+### 3. Configure homeyctl
 
 ```bash
 # Set your Homey's IP address
-homey config set-host 192.168.1.100
+homeyctl config set-host 192.168.1.100
 
 # Set your API token (paste the token you copied)
-homey config set-token <your-token>
+homeyctl config set-token <your-token>
 
 # Verify configuration
-homey config show
+homeyctl config show
 ```
 
-Configuration is stored in `~/.config/homey-cli/config.toml`.
+Configuration is stored in `~/.config/homeyctl/config.toml`.
 
 ## Usage
 
@@ -59,54 +61,54 @@ Configuration is stored in `~/.config/homey-cli/config.toml`.
 
 ```bash
 # List all devices
-homey devices list
+homeyctl devices list
 
 # Get device details
-homey devices get "Living Room Light"
+homeyctl devices get "Living Room Light"
 
 # Control devices
-homey devices set "Living Room Light" onoff true
-homey devices set "Living Room Light" dim 0.5
-homey devices set "Thermostat" target_temperature 22
+homeyctl devices set "Living Room Light" onoff true
+homeyctl devices set "Living Room Light" dim 0.5
+homeyctl devices set "Thermostat" target_temperature 22
 
 # Delete a device
-homey devices delete "Old Device"
+homeyctl devices delete "Old Device"
 ```
 
 ### Flows
 
 ```bash
 # List all flows
-homey flows list
+homeyctl flows list
 
 # Get flow details
-homey flows get "My Flow"
+homeyctl flows get "My Flow"
 
 # Trigger a flow
-homey flows trigger "Good Morning"
+homeyctl flows trigger "Good Morning"
 
 # Update a flow (partial/merge update)
-homey flows update "My Flow" updated-flow.json
+homeyctl flows update "My Flow" updated-flow.json
 
 # Delete a flow
-homey flows delete "Old Flow"
+homeyctl flows delete "Old Flow"
 
 # List available flow cards (for creating flows)
-homey flows cards --type trigger
-homey flows cards --type condition
-homey flows cards --type action
+homeyctl flows cards --type trigger
+homeyctl flows cards --type condition
+homeyctl flows cards --type action
 ```
 
 #### Creating Flows
 
-Create flows from JSON files. See `homey flows create --help` for full documentation.
+Create flows from JSON files. See `homeyctl flows create --help` for full documentation.
 
 ```bash
 # Create a simple flow
-homey flows create my-flow.json
+homeyctl flows create my-flow.json
 
 # Create an advanced flow
-homey flows create --advanced my-advanced-flow.json
+homeyctl flows create --advanced my-advanced-flow.json
 ```
 
 Example flow JSON (turn on heater when user arrives and temperature is low):
@@ -140,123 +142,123 @@ Note: For droptokens, use pipe (`|`) before capability name.
 
 ```bash
 # List users (useful for getting user IDs for flows)
-homey users list
+homeyctl users list
 ```
 
 ### Zones
 
 ```bash
 # List zones
-homey zones list
+homeyctl zones list
 
 # Delete a zone
-homey zones delete "Unused Room"
+homeyctl zones delete "Unused Room"
 ```
 
 ### Apps
 
 ```bash
 # List installed apps
-homey apps list
+homeyctl apps list
 
 # Restart an app
-homey apps restart com.some.app
+homeyctl apps restart com.some.app
 ```
 
 ### Energy
 
 ```bash
 # Show live power usage
-homey energy live
+homeyctl energy live
 
 # Show today's energy report
-homey energy report day
+homeyctl energy report day
 
 # Show report for specific date
-homey energy report day --date 2025-01-10
+homeyctl energy report day --date 2025-01-10
 
 # Weekly and monthly reports
-homey energy report week
-homey energy report month --date 2025-12
+homeyctl energy report week
+homeyctl energy report month --date 2025-12
 
 # Show electricity prices (dynamic)
-homey energy price
+homeyctl energy price
 
 # Set fixed electricity price (e.g., Norgespris 0.50 kr/kWh)
-homey energy price set 0.50
+homeyctl energy price set 0.50
 
 # Get/set price type (fixed, dynamic, disabled)
-homey energy price type
-homey energy price type fixed
+homeyctl energy price type
+homeyctl energy price type fixed
 ```
 
 ### Insights
 
 ```bash
 # List all insight logs
-homey insights list
+homeyctl insights list
 
 # Get historical data for a log
-homey insights get "homey:device:abc123:measure_power"
+homeyctl insights get "homey:device:abc123:measure_power"
 
 # With different resolutions
-homey insights get "homey:device:abc123:measure_power" --resolution lastWeek
+homeyctl insights get "homey:device:abc123:measure_power" --resolution lastWeek
 ```
 
 ### Variables
 
 ```bash
 # List logic variables
-homey variables list
+homeyctl variables list
 
 # Get/set variable
-homey variables get "my_variable"
-homey variables set "my_variable" 42
+homeyctl variables get "my_variable"
+homeyctl variables set "my_variable" 42
 
 # Create/delete variable
-homey variables create "new_var" number 0
-homey variables delete "new_var"
+homeyctl variables create "new_var" number 0
+homeyctl variables delete "new_var"
 ```
 
 ### Notifications
 
 ```bash
 # Send notification to Homey timeline
-homey notifications send "Hello from CLI"
+homeyctl notifications send "Hello from CLI"
 
 # List notifications
-homey notifications list
+homeyctl notifications list
 ```
 
 ### System
 
 ```bash
 # System info
-homey system info
+homeyctl system info
 
 # Reboot Homey (use with caution)
-homey system reboot
+homeyctl system reboot
 ```
 
 ## Output Formats
 
 ```bash
 # JSON output (default)
-homey devices list
+homeyctl devices list
 
 # Table output
-homey devices list --format table
+homeyctl devices list --format table
 
 # Set default format
-homey config set-format table
+homeyctl config set-format table
 ```
 
 ## AI Assistant Support
 
-Get context for AI assistants (Claude, ChatGPT, etc.) to help them use homey-cli:
+Get context for AI assistants (Claude, ChatGPT, etc.) to help them use homeyctl:
 
 ```bash
-homey ai
+homeyctl ai
 ```
 
 This outputs documentation, examples, and flow JSON format - perfect for pasting into an AI chat or including in your project's context.

@@ -60,7 +60,7 @@ var insightsGetCmd = &cobra.Command{
 	Short: "Get insight log entries",
 	Long: `Get historical data entries for an insight log.
 
-The log-id is from 'homey insights list' output.
+The log-id is from 'homeyctl insights list' output.
 Example: homey:device:abc123:measure_power
 
 Resolutions:
@@ -71,8 +71,8 @@ Resolutions:
   - last2Years
 
 Examples:
-  homey insights get "homey:device:abc123:measure_power"
-  homey insights get "homey:device:abc123:measure_power" --resolution lastWeek`,
+  homeyctl insights get "homey:device:abc123:measure_power"
+  homeyctl insights get "homey:device:abc123:measure_power" --resolution lastWeek`,
 	Args: cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		logID := args[0]
@@ -99,7 +99,7 @@ Examples:
 		}
 
 		if ownerURI == "" {
-			return fmt.Errorf("log not found: %s\nUse 'homey insights list' to see available logs", logID)
+			return fmt.Errorf("log not found: %s\nUse 'homeyctl insights list' to see available logs", logID)
 		}
 
 		entries, err := apiClient.GetInsightEntries(ownerURI, ownerID, resolution)

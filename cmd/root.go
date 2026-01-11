@@ -31,34 +31,36 @@ func SetVersionInfo(version, commit, date string) {
 }
 
 const setupInstructions = `
-Welcome to homey-cli! To get started, you need to configure your Homey connection.
+Welcome to homeyctl! To get started, you need to configure your Homey connection.
 
 1. SET YOUR HOMEY'S IP ADDRESS
    Find it in the Homey app: Settings → General → scroll down
    Then run:
-     homey config set-host <ip-address>
+     homeyctl config set-host <ip-address>
 
 2. CREATE AN API KEY
    Go to https://my.homey.app/
    → Settings (gear icon) → API Keys → + New API Key
    Then run:
-     homey config set-token <your-token>
+     homeyctl config set-token <your-token>
 
 3. VERIFY YOUR SETUP
-     homey config show
-     homey devices list
+     homeyctl config show
+     homeyctl devices list
 
-For more help: homey --help
+For more help: homeyctl --help
 `
 
 var rootCmd = &cobra.Command{
-	Use:   "homey",
+	Use:   "homeyctl",
 	Short: "CLI for Homey smart home",
 	Long:  `A command-line interface for controlling Homey devices, flows, and more.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		// Check if configured, show setup instructions if not
 		loadedCfg, _ := config.Load()
 		if loadedCfg == nil || loadedCfg.Token == "" {
+			// Check for legacy config and show migration instructions
+			config.CheckLegacyConfig()
 			fmt.Print(setupInstructions)
 			return
 		}
@@ -70,7 +72,7 @@ var rootCmd = &cobra.Command{
 		cmdPath := cmd.CommandPath()
 		if cmd.Name() == "config" || cmd.Name() == "version" || cmd.Name() == "help" ||
 			cmd.Name() == "set-token" || cmd.Name() == "set-host" || cmd.Name() == "show" ||
-			cmd.Name() == "completion" || cmd.Name() == "ai" || cmdPath == "homey" {
+			cmd.Name() == "completion" || cmd.Name() == "ai" || cmdPath == "homeyctl" {
 			return nil
 		}
 
@@ -81,7 +83,7 @@ var rootCmd = &cobra.Command{
 		}
 
 		if cfg.Token == "" {
-			return fmt.Errorf("no API token configured. Run: homey config set-token <token>")
+			return fmt.Errorf("no API token configured. Run: homeyctl config set-token <token>")
 		}
 
 		if formatFlag != "" {

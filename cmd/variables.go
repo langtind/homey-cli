@@ -161,9 +161,9 @@ var varsCreateCmd = &cobra.Command{
 Types: string, number, boolean
 
 Examples:
-  homey variables create myvar string "hello"
-  homey variables create counter number 0
-  homey variables create enabled boolean true`,
+  homeyctl variables create myvar string "hello"
+  homeyctl variables create counter number 0
+  homeyctl variables create enabled boolean true`,
 	Args: cobra.ExactArgs(3),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		name := args[0]

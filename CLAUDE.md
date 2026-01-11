@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 # Build
-make build        # or: go build -o homey .
+make build        # or: go build -o homeyctl .
 
 # Test
 make test         # or: go test ./...
@@ -33,9 +33,9 @@ This is a CLI tool for controlling Homey smart home devices via the local Homey 
 
 ### Package Structure
 
-- `cmd/` - Cobra command definitions. Each file defines a command group (devices, flows, zones, etc.) with subcommands. Commands follow the pattern: `homey <resource> <action> [args]`
+- `cmd/` - Cobra command definitions. Each file defines a command group (devices, flows, zones, etc.) with subcommands. Commands follow the pattern: `homeyctl <resource> <action> [args]`
 - `internal/client/` - HTTP client for Homey's REST API. All API calls go through `Client.doRequest()` which handles auth headers and error responses
-- `internal/config/` - Configuration management using Viper. Config stored in `~/.config/homey-cli/config.toml`
+- `internal/config/` - Configuration management using Viper. Config stored in `~/.config/homeyctl/config.toml`
 
 ### Adding New Commands
 
@@ -55,7 +55,7 @@ Config is loaded in `PersistentPreRunE` on rootCmd. Commands that don't need API
 
 ## Quick Context
 
-Run `homey ai` to get full documentation for AI assistants - includes flow format, examples, and common patterns.
+Run `homeyctl ai` to get full documentation for AI assistants - includes flow format, examples, and common patterns.
 
 ## Key Learnings
 
@@ -71,7 +71,7 @@ Run `homey ai` to get full documentation for AI assistants - includes flow forma
 
 ### Output Format
 - All list commands return **flat JSON arrays** for easy parsing
-- Example: `homey flows list | jq '.[] | select(.name | test("pult";"i"))'`
+- Example: `homeyctl flows list | jq '.[] | select(.name | test("pult";"i"))'`
 
 ## Release Process
 
