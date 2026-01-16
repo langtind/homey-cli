@@ -131,10 +131,102 @@ Examples:
 	},
 }
 
+var insightsDeleteCmd = &cobra.Command{
+	Use:   "delete <log-id>",
+	Short: "Delete an insight log",
+	Long: `Delete an insight log and all its historical data.
+
+Examples:
+  homeyctl insights delete "homey:device:abc123:measure_power"`,
+	Args: cobra.ExactArgs(1),
+	RunE: func(cmd *cobra.Command, args []string) error {
+		logID := args[0]
+
+		// Look up the log to get ownerUri and ownerId
+		data, err := apiClient.GetInsights()
+		if err != nil {
+			return err
+		}
+
+		var logs []InsightLog
+		if err := json.Unmarshal(data, &logs); err != nil {
+			return fmt.Errorf("failed to parse insights: %w", err)
+		}
+
+		var ownerURI, ownerID, title string
+		for _, log := range logs {
+			if log.ID == logID {
+				ownerURI = log.OwnerURI
+				ownerID = log.OwnerID
+				title = log.Title
+				break
+			}
+		}
+
+		if ownerURI == "" {
+			return fmt.Errorf("log not found: %s", logID)
+		}
+
+		if err := apiClient.DeleteInsightLog(ownerURI, ownerID); err != nil {
+			return err
+		}
+
+		fmt.Printf("Deleted insight log: %s\n", title)
+		return nil
+	},
+}
+
+var insightsClearCmd = &cobra.Command{
+	Use:   "clear <log-id>",
+	Short: "Clear insight log entries",
+	Long: `Clear all historical data from an insight log without deleting the log itself.
+
+Examples:
+  homeyctl insights clear "homey:device:abc123:measure_power"`,
+	Args: cobra.ExactArgs(1),
+	RunE: func(cmd *cobra.Command, args []string) error {
+		logID := args[0]
+
+		// Look up the log to get ownerUri and ownerId
+		data, err := apiClient.GetInsights()
+		if err != nil {
+			return err
+		}
+
+		var logs []InsightLog
+		if err := json.Unmarshal(data, &logs); err != nil {
+			return fmt.Errorf("failed to parse insights: %w", err)
+		}
+
+		var ownerURI, ownerID, title string
+		for _, log := range logs {
+			if log.ID == logID {
+				ownerURI = log.OwnerURI
+				ownerID = log.OwnerID
+				title = log.Title
+				break
+			}
+		}
+
+		if ownerURI == "" {
+			return fmt.Errorf("log not found: %s", logID)
+		}
+
+		if err := apiClient.DeleteInsightLogEntries(ownerURI, ownerID); err != nil {
+			return err
+		}
+
+		fmt.Printf("Cleared entries for: %s\n", title)
+		return nil
+	},
+}
+
 func init() {
 	rootCmd.AddCommand(insightsCmd)
 	insightsCmd.AddCommand(insightsListCmd)
 	insightsCmd.AddCommand(insightsGetCmd)
+	insightsCmd.AddCommand(insightsDeleteCmd)
+	insightsCmd.AddCommand(insightsClearCmd)
 
 	insightsGetCmd.Flags().String("resolution", "last24Hours", "Resolution: last24Hours, lastWeek, lastMonth, lastYear, last2Years")
 }

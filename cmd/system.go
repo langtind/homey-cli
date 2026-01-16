@@ -104,12 +104,60 @@ var systemInsightsCmd = &cobra.Command{
 	},
 }
 
+var systemNameCmd = &cobra.Command{
+	Use:   "name",
+	Short: "Get or set Homey name",
+}
+
+var systemNameGetCmd = &cobra.Command{
+	Use:   "get",
+	Short: "Get Homey name",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		data, err := apiClient.GetSystemName()
+		if err != nil {
+			return err
+		}
+
+		if isTableFormat() {
+			var name string
+			if err := json.Unmarshal(data, &name); err != nil {
+				return err
+			}
+			fmt.Printf("Homey name: %s\n", name)
+			return nil
+		}
+
+		outputJSON(data)
+		return nil
+	},
+}
+
+var systemNameSetCmd = &cobra.Command{
+	Use:   "set <name>",
+	Short: "Set Homey name",
+	Args:  cobra.ExactArgs(1),
+	RunE: func(cmd *cobra.Command, args []string) error {
+		name := args[0]
+
+		if err := apiClient.SetSystemName(name); err != nil {
+			return err
+		}
+
+		fmt.Printf("Set Homey name to: %s\n", name)
+		return nil
+	},
+}
+
 func init() {
 	rootCmd.AddCommand(systemCmd)
 	systemCmd.AddCommand(systemInfoCmd)
 	systemCmd.AddCommand(systemRebootCmd)
 	systemCmd.AddCommand(systemUsersCmd)
 	systemCmd.AddCommand(systemInsightsCmd)
+
+	systemCmd.AddCommand(systemNameCmd)
+	systemNameCmd.AddCommand(systemNameGetCmd)
+	systemNameCmd.AddCommand(systemNameSetCmd)
 
 	systemRebootCmd.Flags().Bool("force", false, "Confirm reboot")
 }

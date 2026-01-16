@@ -88,12 +88,33 @@ func (c *Client) DeleteDevice(id string) error {
 	return err
 }
 
+func (c *Client) UpdateDevice(id string, updates map[string]interface{}) error {
+	_, err := c.doRequest("PUT", "/api/manager/devices/device/"+id, updates)
+	return err
+}
+
 func (c *Client) GetDeviceSettings(id string) (json.RawMessage, error) {
 	return c.doRequest("GET", fmt.Sprintf("/api/manager/devices/device/%s/settings_obj", id), nil)
 }
 
 func (c *Client) SetDeviceSetting(deviceID string, settings map[string]interface{}) error {
 	_, err := c.doRequest("PUT", fmt.Sprintf("/api/manager/devices/device/%s/settings", deviceID), settings)
+	return err
+}
+
+// Device Groups
+
+func (c *Client) CreateDeviceGroup(group map[string]interface{}) (json.RawMessage, error) {
+	return c.doRequest("POST", "/api/manager/devices/group", group)
+}
+
+func (c *Client) UpdateDeviceGroup(id string, updates map[string]interface{}) error {
+	_, err := c.doRequest("PUT", "/api/manager/devices/group/"+id, updates)
+	return err
+}
+
+func (c *Client) RemoveDeviceFromGroup(groupID, deviceID string) error {
+	_, err := c.doRequest("DELETE", fmt.Sprintf("/api/manager/devices/group/%s/device/%s", groupID, deviceID), nil)
 	return err
 }
 
@@ -163,8 +184,21 @@ func (c *Client) GetZones() (json.RawMessage, error) {
 	return c.doRequest("GET", "/api/manager/zones/zone/", nil)
 }
 
+func (c *Client) GetZone(id string) (json.RawMessage, error) {
+	return c.doRequest("GET", "/api/manager/zones/zone/"+id, nil)
+}
+
+func (c *Client) CreateZone(zone map[string]interface{}) (json.RawMessage, error) {
+	return c.doRequest("POST", "/api/manager/zones/zone/", zone)
+}
+
 func (c *Client) DeleteZone(id string) error {
 	_, err := c.doRequest("DELETE", "/api/manager/zones/zone/"+id, nil)
+	return err
+}
+
+func (c *Client) UpdateZone(id string, updates map[string]interface{}) error {
+	_, err := c.doRequest("PUT", "/api/manager/zones/zone/"+id, updates)
 	return err
 }
 
@@ -356,4 +390,255 @@ func (c *Client) CreatePAT(name string, scopes []string) (json.RawMessage, error
 func (c *Client) DeletePAT(id string) error {
 	_, err := c.doRequest("DELETE", "/api/manager/users/pat/"+id, nil)
 	return err
+}
+
+// Flow Folders
+
+func (c *Client) GetFlowFolders() (json.RawMessage, error) {
+	return c.doRequest("GET", "/api/manager/flow/flowfolder/", nil)
+}
+
+func (c *Client) GetFlowFolder(id string) (json.RawMessage, error) {
+	return c.doRequest("GET", "/api/manager/flow/flowfolder/"+id, nil)
+}
+
+func (c *Client) CreateFlowFolder(folder map[string]interface{}) (json.RawMessage, error) {
+	return c.doRequest("POST", "/api/manager/flow/flowfolder/", folder)
+}
+
+func (c *Client) UpdateFlowFolder(id string, folder map[string]interface{}) error {
+	_, err := c.doRequest("PUT", "/api/manager/flow/flowfolder/"+id, folder)
+	return err
+}
+
+func (c *Client) DeleteFlowFolder(id string) error {
+	_, err := c.doRequest("DELETE", "/api/manager/flow/flowfolder/"+id, nil)
+	return err
+}
+
+// Apps (extended)
+
+func (c *Client) InstallApp(appID string, channel string) (json.RawMessage, error) {
+	body := map[string]interface{}{
+		"id":             appID,
+		"waitForInstall": true,
+	}
+	if channel != "" {
+		body["channel"] = channel
+	}
+	return c.doRequest("POST", "/api/manager/apps/store", body)
+}
+
+func (c *Client) UninstallApp(id string) error {
+	_, err := c.doRequest("DELETE", "/api/manager/apps/app/"+id, nil)
+	return err
+}
+
+func (c *Client) EnableApp(id string) error {
+	_, err := c.doRequest("PUT", fmt.Sprintf("/api/manager/apps/app/%s/enable", id), nil)
+	return err
+}
+
+func (c *Client) DisableApp(id string) error {
+	_, err := c.doRequest("PUT", fmt.Sprintf("/api/manager/apps/app/%s/disable", id), nil)
+	return err
+}
+
+func (c *Client) UpdateApp(id string, updates map[string]interface{}) error {
+	_, err := c.doRequest("PUT", "/api/manager/apps/app/"+id, updates)
+	return err
+}
+
+func (c *Client) GetAppSettings(id string) (json.RawMessage, error) {
+	return c.doRequest("GET", fmt.Sprintf("/api/manager/apps/app/%s/setting", id), nil)
+}
+
+func (c *Client) SetAppSetting(appID, settingName string, value interface{}) error {
+	body := map[string]interface{}{"value": value}
+	_, err := c.doRequest("PUT", fmt.Sprintf("/api/manager/apps/app/%s/setting/%s", appID, settingName), body)
+	return err
+}
+
+func (c *Client) GetAppUsage(id string) (json.RawMessage, error) {
+	return c.doRequest("GET", fmt.Sprintf("/api/manager/apps/app/%s/usage", id), nil)
+}
+
+// Users (extended)
+
+func (c *Client) GetUser(id string) (json.RawMessage, error) {
+	return c.doRequest("GET", "/api/manager/users/user/"+id, nil)
+}
+
+func (c *Client) GetUserMe() (json.RawMessage, error) {
+	return c.doRequest("GET", "/api/manager/users/user/me", nil)
+}
+
+func (c *Client) CreateUser(user map[string]interface{}) (json.RawMessage, error) {
+	return c.doRequest("POST", "/api/manager/users/user/", user)
+}
+
+func (c *Client) UpdateUser(id string, updates map[string]interface{}) error {
+	_, err := c.doRequest("PUT", "/api/manager/users/user/"+id, updates)
+	return err
+}
+
+func (c *Client) DeleteUser(id string) error {
+	_, err := c.doRequest("DELETE", "/api/manager/users/user/"+id, nil)
+	return err
+}
+
+// Moods
+
+func (c *Client) GetMoods() (json.RawMessage, error) {
+	return c.doRequest("GET", "/api/manager/moods/mood/", nil)
+}
+
+func (c *Client) GetMood(id string) (json.RawMessage, error) {
+	return c.doRequest("GET", "/api/manager/moods/mood/"+id, nil)
+}
+
+func (c *Client) CreateMood(mood map[string]interface{}) (json.RawMessage, error) {
+	return c.doRequest("POST", "/api/manager/moods/mood/", mood)
+}
+
+func (c *Client) UpdateMood(id string, updates map[string]interface{}) error {
+	_, err := c.doRequest("PUT", "/api/manager/moods/mood/"+id, updates)
+	return err
+}
+
+func (c *Client) DeleteMood(id string) error {
+	_, err := c.doRequest("DELETE", "/api/manager/moods/mood/"+id, nil)
+	return err
+}
+
+func (c *Client) SetMood(id string) error {
+	_, err := c.doRequest("POST", fmt.Sprintf("/api/manager/moods/mood/%s/set", id), nil)
+	return err
+}
+
+// Dashboards
+
+func (c *Client) GetDashboards() (json.RawMessage, error) {
+	return c.doRequest("GET", "/api/manager/dashboards/dashboard/", nil)
+}
+
+func (c *Client) GetDashboard(id string) (json.RawMessage, error) {
+	return c.doRequest("GET", "/api/manager/dashboards/dashboard/"+id, nil)
+}
+
+func (c *Client) CreateDashboard(dashboard map[string]interface{}) (json.RawMessage, error) {
+	return c.doRequest("POST", "/api/manager/dashboards/dashboard/", dashboard)
+}
+
+func (c *Client) UpdateDashboard(id string, updates map[string]interface{}) error {
+	_, err := c.doRequest("PUT", "/api/manager/dashboards/dashboard/"+id, updates)
+	return err
+}
+
+func (c *Client) DeleteDashboard(id string) error {
+	_, err := c.doRequest("DELETE", "/api/manager/dashboards/dashboard/"+id, nil)
+	return err
+}
+
+// Presence
+
+func (c *Client) GetPresent(userID string) (json.RawMessage, error) {
+	return c.doRequest("GET", fmt.Sprintf("/api/manager/presence/%s/present", userID), nil)
+}
+
+func (c *Client) SetPresent(userID string, value bool) error {
+	body := map[string]interface{}{"value": value}
+	_, err := c.doRequest("PUT", fmt.Sprintf("/api/manager/presence/%s/present", userID), body)
+	return err
+}
+
+func (c *Client) SetPresentMe(value bool) error {
+	body := map[string]interface{}{"value": value}
+	_, err := c.doRequest("PUT", "/api/manager/presence/me/present", body)
+	return err
+}
+
+func (c *Client) GetAsleep(userID string) (json.RawMessage, error) {
+	return c.doRequest("GET", fmt.Sprintf("/api/manager/presence/%s/asleep", userID), nil)
+}
+
+func (c *Client) SetAsleep(userID string, value bool) error {
+	body := map[string]interface{}{"value": value}
+	_, err := c.doRequest("PUT", fmt.Sprintf("/api/manager/presence/%s/asleep", userID), body)
+	return err
+}
+
+func (c *Client) SetAsleepMe(value bool) error {
+	body := map[string]interface{}{"value": value}
+	_, err := c.doRequest("PUT", "/api/manager/presence/me/asleep", body)
+	return err
+}
+
+// Notifications (extended)
+
+func (c *Client) DeleteNotification(id string) error {
+	_, err := c.doRequest("DELETE", "/api/manager/notifications/notification/"+id, nil)
+	return err
+}
+
+func (c *Client) DeleteAllNotifications() error {
+	_, err := c.doRequest("DELETE", "/api/manager/notifications/notification/", nil)
+	return err
+}
+
+func (c *Client) GetNotificationOwners() (json.RawMessage, error) {
+	return c.doRequest("GET", "/api/manager/notifications/owner/", nil)
+}
+
+// Insights (extended)
+
+func (c *Client) DeleteInsightLog(uri, id string) error {
+	encodedURI := url.PathEscape(uri)
+	encodedID := url.PathEscape(id)
+	_, err := c.doRequest("DELETE", fmt.Sprintf("/api/manager/insights/log/%s/%s", encodedURI, encodedID), nil)
+	return err
+}
+
+func (c *Client) DeleteInsightLogEntries(uri, id string) error {
+	encodedURI := url.PathEscape(uri)
+	encodedID := url.PathEscape(id)
+	_, err := c.doRequest("DELETE", fmt.Sprintf("/api/manager/insights/log/%s/%s/entry", encodedURI, encodedID), nil)
+	return err
+}
+
+// System (extended)
+
+func (c *Client) GetSystemName() (json.RawMessage, error) {
+	return c.doRequest("GET", "/api/manager/system/name", nil)
+}
+
+func (c *Client) SetSystemName(name string) error {
+	body := map[string]interface{}{"name": name}
+	_, err := c.doRequest("PUT", "/api/manager/system/name", body)
+	return err
+}
+
+// Weather
+
+func (c *Client) GetWeather() (json.RawMessage, error) {
+	return c.doRequest("GET", "/api/manager/weather/weather", nil)
+}
+
+func (c *Client) GetWeatherForecast() (json.RawMessage, error) {
+	return c.doRequest("GET", "/api/manager/weather/forecast/hourly", nil)
+}
+
+// Energy (extended)
+
+func (c *Client) GetEnergyReportYear(year string) (json.RawMessage, error) {
+	return c.doRequest("GET", "/api/manager/energy/report/year?year="+year, nil)
+}
+
+func (c *Client) DeleteEnergyReports() error {
+	_, err := c.doRequest("DELETE", "/api/manager/energy/reports", nil)
+	return err
+}
+
+func (c *Client) GetEnergyCurrency() (json.RawMessage, error) {
+	return c.doRequest("GET", "/api/manager/energy/currency", nil)
 }

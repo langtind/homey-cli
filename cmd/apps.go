@@ -24,6 +24,27 @@ var appsCmd = &cobra.Command{
 	Long:  `List, view, and restart Homey apps.`,
 }
 
+// findApp finds an app by name or ID from the list of all apps
+func findApp(nameOrID string) (*App, error) {
+	data, err := apiClient.GetApps()
+	if err != nil {
+		return nil, err
+	}
+
+	var apps map[string]App
+	if err := json.Unmarshal(data, &apps); err != nil {
+		return nil, fmt.Errorf("failed to parse apps: %w", err)
+	}
+
+	for _, a := range apps {
+		if a.ID == nameOrID || strings.EqualFold(a.Name, nameOrID) {
+			return &a, nil
+		}
+	}
+
+	return nil, fmt.Errorf("app not found: %s", nameOrID)
+}
+
 var appsListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List all apps",

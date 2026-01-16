@@ -214,6 +214,106 @@ func printEnergyReportTable(data json.RawMessage, period, date string) error {
 	return nil
 }
 
+var energyReportYearCmd = &cobra.Command{
+	Use:   "year [year]",
+	Short: "Show yearly energy report",
+	Long: `Show energy consumption report for a year.
+
+Examples:
+  homeyctl energy report year         # Current year
+  homeyctl energy report year 2024    # Specific year`,
+	Args: cobra.MaximumNArgs(1),
+	RunE: func(cmd *cobra.Command, args []string) error {
+		year := time.Now().Format("2006")
+		if len(args) > 0 {
+			year = args[0]
+		}
+
+		data, err := apiClient.GetEnergyReportYear(year)
+		if err != nil {
+			return err
+		}
+
+		if isTableFormat() {
+			var report struct {
+				Date        string `json:"date"`
+				Electricity struct {
+					ConsumedPeriod  *float64 `json:"consumedPeriod"`
+					GeneratedPeriod *float64 `json:"generatedPeriod"`
+					ImportedPeriod  *float64 `json:"importedPeriod"`
+				} `json:"electricity"`
+			}
+			if err := json.Unmarshal(data, &report); err != nil {
+				outputJSON(data)
+				return nil
+			}
+
+			fmt.Printf("Energy Report: Year %s\n\n", year)
+			if report.Electricity.ConsumedPeriod != nil {
+				fmt.Printf("Total consumed: %.2f kWh\n", *report.Electricity.ConsumedPeriod)
+			}
+			if report.Electricity.ImportedPeriod != nil {
+				fmt.Printf("Total imported: %.2f kWh\n", *report.Electricity.ImportedPeriod)
+			}
+			if report.Electricity.GeneratedPeriod != nil && *report.Electricity.GeneratedPeriod > 0 {
+				fmt.Printf("Total generated: %.2f kWh\n", *report.Electricity.GeneratedPeriod)
+			}
+			return nil
+		}
+
+		outputJSON(data)
+		return nil
+	},
+}
+
+var energyDeleteCmd = &cobra.Command{
+	Use:   "delete",
+	Short: "Delete all energy reports",
+	Long: `Delete all stored energy reports and data.
+
+WARNING: This permanently deletes all energy history.
+
+Example:
+  homeyctl energy delete --force`,
+	RunE: func(cmd *cobra.Command, args []string) error {
+		force, _ := cmd.Flags().GetBool("force")
+		if !force {
+			return fmt.Errorf("use --force to confirm deletion of all energy reports")
+		}
+
+		if err := apiClient.DeleteEnergyReports(); err != nil {
+			return err
+		}
+
+		fmt.Println("Deleted all energy reports")
+		return nil
+	},
+}
+
+var energyCurrencyCmd = &cobra.Command{
+	Use:   "currency",
+	Short: "Show energy currency settings",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		data, err := apiClient.GetEnergyCurrency()
+		if err != nil {
+			return err
+		}
+
+		if isTableFormat() {
+			var currency string
+			if err := json.Unmarshal(data, &currency); err != nil {
+				outputJSON(data)
+				return nil
+			}
+			fmt.Printf("Energy currency: %s\n", currency)
+			return nil
+		}
+
+		outputJSON(data)
+		return nil
+	},
+}
+
 var energyPriceCmd = &cobra.Command{
 	Use:   "price",
 	Short: "Show current electricity price",
@@ -376,9 +476,14 @@ func init() {
 	energyCmd.AddCommand(energyLiveCmd)
 	energyCmd.AddCommand(energyReportCmd)
 	energyCmd.AddCommand(energyPriceCmd)
+	energyCmd.AddCommand(energyDeleteCmd)
+	energyCmd.AddCommand(energyCurrencyCmd)
+
+	energyReportCmd.AddCommand(energyReportYearCmd)
 
 	energyPriceCmd.AddCommand(energyPriceSetCmd)
 	energyPriceCmd.AddCommand(energyPriceTypeCmd)
 
 	energyReportCmd.Flags().String("date", "", "Date for report (format: YYYY-MM-DD for day, YYYY-MM for month)")
+	energyDeleteCmd.Flags().Bool("force", false, "Confirm deletion")
 }
